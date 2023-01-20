@@ -1,0 +1,28 @@
+{
+  "name": "abyss-browser",
+  "version": "1.0.0",
+  "description": "Abyss is a web proxy.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abyss-Services/abyss-browser.git"
+  },
+  "keywords": [
+    "Proxy",
+    "Web",
+    "Proxy"
+  ],
+  "author": "830008",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Abyss-Services/abyss-browser/issues"
+  },
+  "homepage": "https://github.com/Abyss-Services/abyss-browser#readme",
+  "dependencies": {
+    "@tomphttp/bare-server-node": "^1.2.2",
+    "node-static": "^0.7.11"
+  }
+}
