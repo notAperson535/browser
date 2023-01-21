@@ -1,73 +1,35 @@
-import createServer from '@tomphttp/bare-server-node';
-import http from 'http';
-import nodeStatic from 'node-static';
-
-
-const bare =  createServer('/bare/');
-const serve = new nodeStatic.Server('/public/');
-
-const server = http.createServer();
-
-server.on('request', (req, res) => {
-    if (bare.shouldRoute(req)) {
-		bare.routeRequest(req, res);
-	} else {
-		serve.serve(req, res);
-	}
-});
-
-server.on('upgrade', (req, socket, head) => {
-	if (bare.shouldRoute(req, socket, head)) {
-		bare.routeUpgrade(req, socket, head);
-	}else{
-		socket.end();
-	}
-});
-
-server.listen({
-	port: process.env.PORT || 8080,
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 export default class {
-	prefix = "";
-	wsPrefix = "";
-	debug = true;
+	prefix: string;
+	wsPrefix: string;
+	debug: boolean;
 
-	constructor(prefix, wsPrefix, debug) {
+	constructor(prefix: string, wsPrefix: string, debug?: boolean) {
 		this.prefix = prefix;
 		this.wsPrefix = wsPrefix;
 		this.debug = debug ?? false;
 	}
-	route(path) {
+	route(path: string): boolean {
 		return path === this.prefix;
 	}
-	routeWs(path) {
+	routeWs(path: string): boolean {
 		return path.startsWith(this.wsPrefix);
 	}
-	async handle(req) {
-		const url = req.headers.get("x-url") || "";
+	async handle(req: Request): Promise<Response> {
+		const url: string = req.headers.get("x-url") || "";
 
 		// deno-lint-ignore ban-types
-		const headers = JSON.parse(req.headers.get("x-headers") || "");
+		const headers: Object = JSON.parse(req.headers.get("x-headers") || "");
 
 		if (this.debug) console.log(`Handling ${url}`);
 
 		try {
-			const opts = {
+			const opts: {
+				method: string;
+				// deno-lint-ignore no-explicit-any
+				headers: any;
+				body?: string;
+			} = {
 				method: req.method,
 				headers: headers,
 			};
@@ -78,7 +40,7 @@ export default class {
 				console.log(`${req.method} ${url}`);
 			}
 
-			const proxyResp = await fetch(url, opts);
+			const proxyResp: Response = await fetch(url, opts);
 
 			const respHeaders = Object.fromEntries(proxyResp.headers.entries());
 
@@ -98,10 +60,10 @@ export default class {
 			return new Response(err.message, { status: 500 });
 		}
 	}
-	handleWs(req) {
-		let resp, sock = nul;
+	handleWs(req: Request): Response {
+		let resp: Response, sock: WebSocket;
 
-		const proto = req.headers.get("sec-websocket-protocol") || "";
+		const proto: string = req.headers.get("sec-websocket-protocol") || "";
 
 		try {
 			({ response: resp, socket: sock } = Deno.upgradeWebSocket(req, {
@@ -111,7 +73,7 @@ export default class {
 			return new Response("Not a WS connection");
 		}
 
-		const url = new URL(req.url).searchParams.get("url") || "";
+		const url: string = new URL(req.url).searchParams.get("url") || "";
 
 		if (this.debug) console.log(`Handling WS ${url}`);
 
