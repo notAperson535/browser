@@ -1,3 +1,6 @@
 [submodule "public/backend"]
 	path = public/backend
 	url = https://github.com/Abyss-Services/Backend-Aero
+[submodule "sdk"]
+	path = sdk
+	url = https://github.com/ProxyHaven/sdk
